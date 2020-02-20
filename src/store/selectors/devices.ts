@@ -1,8 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { RootState } from 'store/modules';
+import { getDevices } from './shared';
 
-const getDevices = (state: RootState) => state.devices.devices;
 const getSelected = (state: RootState) => state.devices.selectedId;
 
 const devices = createSelector(getDevices, obj => Object.values(obj));

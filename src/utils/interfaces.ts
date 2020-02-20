@@ -40,7 +40,7 @@ export interface Device {
   model: string | null;
   contact: string | null;
   category: string | null;
-  status: string | null;
+  status: 'online' | 'offline' | 'unknown' | null;
 }
 
 export interface Position {

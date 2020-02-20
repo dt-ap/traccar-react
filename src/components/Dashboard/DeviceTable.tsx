@@ -32,7 +32,7 @@ const DeviceTable: FC = () => {
           >
             <TableCell>{row.name}</TableCell>
             <TableCell>
-              <TimeAgo datetime={row.lastUpdate} live={false} />
+              <TimeAgo datetime={row.lastUpdate} />
             </TableCell>
           </TableRow>
         ))}
