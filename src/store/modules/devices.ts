@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { NormalizedSchema } from 'normalizr';
+import { NormalizedSchema, schema } from 'normalizr';
 
 import { Device } from 'utils/interfaces';
+import { DeviceEntities } from 'utils/types';
 
 type DevicesState = {
   selectedId: number | null;
@@ -26,14 +27,22 @@ const { reducer, actions } = createSlice({
       state.isLoading = true;
       state.error = null;
     },
-    fetchSucceeded(state, action: PayloadAction<NormalizedSchema<any, number[]>>) {
+    fetchSucceeded(
+      state,
+      action: PayloadAction<NormalizedSchema<DeviceEntities, number[]>>,
+    ) {
       state.devices = action.payload.entities.devices;
       state.ids = action.payload.result;
       state.error = null;
       state.isLoading = false;
     },
-    fromSocket(state, action: PayloadAction<NormalizedSchema<any, number[]>>) {
-
+    socketUpdate(
+      state,
+      action: PayloadAction<NormalizedSchema<DeviceEntities, number[]>>,
+    ) {
+      Object.values(action.payload.entities.devices).forEach(el => {
+        state.devices[el.id] = el;
+      });
       state.error = null;
       state.isLoading = false;
     },
@@ -46,7 +55,7 @@ const { reducer, actions } = createSlice({
     failed(state, action: PayloadAction<string | null>) {
       state.isLoading = false;
       state.error = action.payload;
-    }
+    },
   },
 });
 

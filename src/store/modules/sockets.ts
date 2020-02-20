@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type SocketState = {
-  isStarting: boolean | null;
+  isLoading: boolean | null;
   isConnected: boolean;
   error: string | null;
 };
@@ -10,13 +10,13 @@ type SocketState = {
 const { reducer, actions } = createSlice({
   name: 'sockets',
   initialState: {
-    isStarting: null,
+    isLoading: null,
     isConnected: false,
     error: null,
   } as SocketState,
   reducers: {
     start(state) {
-      state.isStarting = true;
+      state.isLoading = true;
       state.isConnected = false;
       state.error = null;
     },
@@ -26,7 +26,7 @@ const { reducer, actions } = createSlice({
     },
     connected(state) {
       state.isConnected = true;
-      state.isStarting = false;
+      state.isLoading = false;
       state.error = null;
     }
   },

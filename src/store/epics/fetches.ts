@@ -1,6 +1,4 @@
-import { of } from 'rxjs';
-import { filter, switchMapTo, concatMap, delay } from 'rxjs/operators';
-import { schema, normalize } from 'normalizr';
+import { filter, switchMapTo } from 'rxjs/operators';
 
 import { devicesActions } from 'store/modules';
 import { AppEpic } from './types';

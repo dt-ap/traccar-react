@@ -1,22 +1,34 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Position, SocketData } from 'utils/interfaces';
+import { Position } from 'utils/interfaces';
+import { NormalizedSchema } from 'normalizr';
+import { PositionEntities } from 'utils/types';
 
 type PositionsState = {
-  items: Position[];
+  positions: Record<number, Position>;
+  deviceIds: number[];
+  isLoading: boolean;
+  error: string | null;
 };
 
 const { reducer, actions } = createSlice({
   name: 'positions',
   initialState: {
-    items: [] as Position[],
+    positions: {},
+    deviceIds: [],
+    isLoading: false,
+    error: null,
   } as PositionsState,
   reducers: {
-    fromSocket(state, action: PayloadAction<SocketData>) {
-      const { positions } = action.payload;
-      if (positions) {
-        state.items = positions;
-      }
+    socketUpdate(
+      state,
+      action: PayloadAction<NormalizedSchema<PositionEntities, number[]>>,
+    ) {
+      Object.values(action.payload.entities.positions).forEach(el => {
+        state.positions[el.deviceId] = el;
+      });
+      state.error = null;
+      state.isLoading = false;
     },
   },
 });

@@ -1,27 +1,57 @@
-import { concat } from 'rxjs';
+import { concat, of } from 'rxjs';
+import { filter, switchMapTo, concatMap, catchError } from 'rxjs/operators';
+import { normalize, schema } from 'normalizr';
+
 import {
-  filter,
-  switchMapTo,
-} from 'rxjs/operators';
-import { ofType } from 'redux-observable';
-
-import { socketsActions } from 'store/modules';
+  socketsActions,
+  devicesActions,
+  positionsActions,
+} from 'store/modules';
+import { SocketData, Device, Position } from 'utils/interfaces';
+import { DeviceEntities, PositionEntities } from 'utils/types';
 import { AppEpic } from './types';
-import { startSocket$, fetchDevices$ } from './shared';
+import { fetchDevices$, deviceListSchema } from './shared';
 
-export const socketEpic: AppEpic = (action$, state$, dep) =>
-  action$.pipe(
-    filter(socketsActions.start.match),
-    switchMapTo(startSocket$(action$, state$, dep)),
+const positionListSchema = [
+  new schema.Entity<Position>('positions', {}, { idAttribute: 'deviceId' }),
+];
+
+const normDevice = (devices: Device[]) =>
+  normalize<Device, DeviceEntities, number[]>(devices, deviceListSchema);
+
+const normPosition = (positions: Position[]) =>
+  normalize<Position, PositionEntities, number[]>(
+    positions,
+    positionListSchema,
   );
 
-export const initEpic: AppEpic = (action$, state$, dep) =>
+export const appInitEpic: AppEpic = (action$, state$, dep) =>
   action$.pipe(
-    ofType('INIT_MAIN'),
+    filter(socketsActions.start.match),
     switchMapTo(
       concat(
         fetchDevices$(action$, state$, dep),
-        startSocket$(action$, state$, dep),
+        dep.socket.pipe(
+          concatMap((sockData: SocketData) => {
+            const { positions, devices } = sockData;
+            const actionsList: Array<{ payload: any; type: string }> = state$
+              .value.sockets.isConnected
+              ? []
+              : [socketsActions.connected()];
+            if (positions) {
+              actionsList.push(
+                positionsActions.socketUpdate(normPosition(positions)),
+              );
+            }
+            if (devices) {
+              actionsList.push(
+                devicesActions.socketUpdate(normDevice(devices)),
+              );
+            }
+            return of(...actionsList);
+          }),
+          catchError(err => of(socketsActions.failed('Connection error!'))),
+        ),
       ),
     ),
   );

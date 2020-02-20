@@ -14,6 +14,7 @@ import { AppDispatch } from 'store';
 import {
   RootState,
   barTitlesActions,
+  socketsActions,
 } from 'store/modules';
 import { SidebarItem } from 'utils/types';
 import { Dashboard, Driver, Vehicle, Report } from 'components';
@@ -98,7 +99,7 @@ const useBarTitle = (dispatch: Dispatch<AnyAction>) => {
 
 const useFetchData = (dispatch: Dispatch<AnyAction>) => {
   useEffect(() => {
-    dispatch({ type: 'INIT_MAIN' });
+    dispatch(socketsActions.start());
   }, [dispatch]);
 };
 

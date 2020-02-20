@@ -2,17 +2,13 @@ import { of } from 'rxjs';
 import { concatMap, catchError } from 'rxjs/operators';
 import { normalize, schema } from 'normalizr';
 
-import { socketsActions, devicesActions } from 'store/modules';
-import { SocketData, Device } from 'utils/interfaces';
+import { devicesActions } from 'store/modules';
+import { Device } from 'utils/interfaces';
+import { DeviceEntities } from 'utils/types';
 import { AppEpic } from './types';
 
-const deviceListSchema = [new schema.Entity<Device>('devices')];
 
-export const startSocket$: AppEpic = (action$, state$, { socket }) =>
-  socket.pipe(
-    concatMap((sockData: SocketData) => of(socketsActions.connected())),
-    catchError(err => of(socketsActions.failed('Connection error!'))),
-  );
+export const deviceListSchema = [new schema.Entity<Device>('devices')];
 
 export const fetchDevices$: AppEpic = (action$, state$, { ajax }) =>
   ajax({
@@ -22,7 +18,7 @@ export const fetchDevices$: AppEpic = (action$, state$, { ajax }) =>
     concatMap(data =>
       of(
         devicesActions.fetchSucceeded(
-          normalize(data.response as Device[], deviceListSchema),
+          normalize<Device, DeviceEntities, number[]>(data.response as Device[], deviceListSchema),
         ),
       ),
     ),
