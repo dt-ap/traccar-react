@@ -1,13 +1,17 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   AppBar,
   IconButton,
   makeStyles,
   Toolbar,
   Typography,
+  Button,
 } from '@material-ui/core';
 import { ChevronLeft, Menu } from '@material-ui/icons';
 import clsx from 'clsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { authsActions, RootState } from 'store/modules';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = (drawerMaxWidth: number) =>
   makeStyles(theme => ({
@@ -29,6 +33,12 @@ const useStyles = (drawerMaxWidth: number) =>
     hide: {
       display: 'none',
     },
+    logoutStyle: {
+      textTransform: 'none'
+    },
+    titleStyle: {
+      flexGrow: 1
+    }
   }));
 
 type Props = {
@@ -39,6 +49,8 @@ type Props = {
   onDrawerClose?: () => void;
 };
 
+const getAuth = (state: RootState) => state.auths;
+
 const Topbar: FC<Props> = ({
   title,
   maxDrawerWidth = 240,
@@ -46,7 +58,16 @@ const Topbar: FC<Props> = ({
   onDrawerOpen = () => ({}),
   onDrawerClose = () => ({}),
 }) => {
-  const { appBar, appBarShift, menuButton, hide } = useStyles(maxDrawerWidth)();
+  const { appBar, appBarShift, menuButton, hide, titleStyle, logoutStyle } = useStyles(maxDrawerWidth)();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { isAuth } = useSelector(getAuth);
+
+  useEffect(() => {
+    if (isAuth !== null && isAuth) {
+      history.push('/login');
+    }
+  }, [isAuth, history]);
 
   function onOpen() {
     onDrawerOpen();
@@ -54,6 +75,10 @@ const Topbar: FC<Props> = ({
 
   function onClose() {
     onDrawerClose();
+  }
+
+  function handleLogout() {
+    dispatch(authsActions.logout());
   }
 
   return (
@@ -83,9 +108,14 @@ const Topbar: FC<Props> = ({
         >
           <ChevronLeft />
         </IconButton>
-        <Typography variant="h6" noWrap>
+        <Typography variant="h6" noWrap className={titleStyle}>
           {title}
         </Typography>
+        <Button color="inherit" className={logoutStyle} onClick={handleLogout}>
+          <Typography variant="h5" noWrap>
+            Logout
+          </Typography>
+        </Button>
       </Toolbar>
     </AppBar>
   );

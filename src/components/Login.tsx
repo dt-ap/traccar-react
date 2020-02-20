@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   Container,
   CssBaseline,
@@ -10,10 +10,11 @@ import {
   Button,
 } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch } from 'store';
-import { authsActions } from 'store/modules';
+import { authsActions, RootState } from 'store/modules';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -31,6 +32,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const getAuth = (state: RootState) => state.auths;
+
 const Login: FC = () => {
   const { paper, form, submit } = useStyles();
   const { register, handleSubmit } = useForm<{
@@ -38,6 +41,14 @@ const Login: FC = () => {
     password: string;
   }>();
   const dispatch = useDispatch<AppDispatch>();
+  const { isAuth } = useSelector(getAuth);
+  const history = useHistory();
+
+  useEffect(() => {
+    if (isAuth !== null && isAuth) {
+      history.push('/dashboard');
+    }
+  }, [isAuth, history]);
 
   const onSubmit = handleSubmit((data) => {
     dispatch(authsActions.login(data));

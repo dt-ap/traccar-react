@@ -73,11 +73,11 @@ const useStyles = makeStyles(theme => ({
 
 const MainRoutes: FC = () => (
   <Switch>
-    <Redirect exact path="/" to="/dashboard" />
     <Route exact path="/dashboard" component={Dashboard} />
     <Route exact path="/reports" component={Report} />
     <Route exact path="/vehicles" component={Vehicle} />
     <Route exact path="/drivers" component={Driver} />
+    <Redirect to="/dashboard" />
   </Switch>
 );
 

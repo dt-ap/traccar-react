@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type AuthState = {
-  isAuth: boolean;
+  isAuth: boolean | null;
   isLoading: boolean | null;
   error: string | null;
 };
@@ -10,7 +10,7 @@ type AuthState = {
 const { reducer, actions } = createSlice({
   name: 'auths',
   initialState: {
-    isAuth: false,
+    isAuth: null,
     isLoading: false,
     error: null,
   } as AuthState,
@@ -32,6 +32,8 @@ const { reducer, actions } = createSlice({
     logout(state) {
       state.error = null;
       state.isLoading = true;
+    },
+    logoutSuccess(state) {
       state.isAuth = false;
     },
     checkAuth(state) {

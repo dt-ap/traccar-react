@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, zip, iif } from 'rxjs';
 import { AjaxError } from 'rxjs/ajax';
 import {
   filter,
@@ -6,6 +6,7 @@ import {
   catchError,
   switchMapTo,
   concatMap,
+  delay,
 } from 'rxjs/operators';
 
 import { authsActions, usersActions, serversActions } from 'store/modules';
@@ -36,20 +37,56 @@ export const loginEpic: AppEpic = (action$, _, { ajax }) =>
     ),
   );
 
-export const checkAuthEpic: AppEpic = (action$, _, { ajax }) =>
+export const checkAuthEpic: AppEpic = (action$, state$, { ajax }) =>
   action$.pipe(
     filter(authsActions.checkAuth.match),
     switchMapTo(
       ajax({
         url: `${process.env.REACT_APP_ROOT_URL}api/server`,
         method: 'GET',
-      }),
-    ),
-    concatMap(data =>
-      of(
-        authsActions.loginSuccess(),
-        serversActions.set(data.response as Server),
+      }).pipe(
+        concatMap(data =>
+          zip(
+            of(true),
+            of(
+              authsActions.loginSuccess(),
+              serversActions.set(data.response as Server),
+            ),
+          ),
+        ),
+        catchError(_ => zip(of(false), of(authsActions.loginFail(null)))),
+        concatMap(([success, serverData]) =>
+          iif(
+            () => success,
+            ajax({
+              url: `${process.env.REACT_APP_ROOT_URL}api/session`,
+              method: 'GET',
+            }).pipe(
+              concatMap(sessData =>
+                of(usersActions.setUser(sessData.response as User), serverData),
+              ),
+              catchError((err: AjaxError) =>
+                err.status === 401
+                  ? of(authsActions.loginFail('Invalid email or password'))
+                  : of(authsActions.loginFail(err.response)),
+              ),
+            ),
+            of(serverData),
+          ),
+        ),
       ),
     ),
-    catchError(_ => of(authsActions.loginFail(null))),
+  );
+
+export const logoutEpic: AppEpic = (action$, _, { ajax }) =>
+  action$.pipe(
+    filter(authsActions.logout.match),
+    switchMapTo(
+      ajax({
+        url: `${process.env.REACT_APP_ROOT_URL}api/session`,
+        method: 'DELETE',
+      }).pipe(
+        concatMap(data => of(authsActions.logoutSuccess()))
+      ),
+    ),
   );
