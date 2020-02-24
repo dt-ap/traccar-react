@@ -1,37 +1,33 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { FC, useEffect } from 'react';
-import { Switch, Route, useHistory } from 'react-router-dom';
+import { Switch, Route, Redirect, RouteProps } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Login } from 'components';
 import { MainLayout } from 'layouts';
-import { useDispatch, useSelector } from 'react-redux';
 import { authsActions, RootState } from 'store/modules';
-import { PrivateRoute } from 'components/PrivateRoute';
 
 const getAuth = (state: RootState) => state.auths;
 
-// const App: FC = () => {
-//   const { isLoading, isAuth } = useSelector(getAuth);
-//   const dispatch = useDispatch();
+export const AppRoutes: FC<RouteProps> = (props) => {
+  const { isAuth } = useSelector(getAuth);
 
-//   useEffect(() => {
-//     dispatch(authsActions.checkAuth());
-//   }, [dispatch]);
+  const renderOnAuth = () => {
+    if (isAuth !== null) {
+      return isAuth ? <MainLayout /> : <Redirect to="/login" />;
+    }
+    return <h1>Loading....</h1>;
+  };
 
-//   if (isLoading) {
-//     return <h1>...LOADING</h1>;
-//   }
-//   return (
-//     <Switch>
-//       <Route exact path={['/dashboard', '/']} component={MainLayout} />
-//       <Route exact path="/login" component={Login} />
-//       <Route path="*" component={ErrorMain} />
-//     </Switch>
-//   );
-// };
+  return (
+    <>
+      <Route {...props} render={() => renderOnAuth()} />
+      {isAuth !== null ? <Route path="/login" component={Login} /> : null}
+    </>
+  );
+};
 
 const App: FC = () => {
-  // const history = useHistory();
-  // const { isAuth } = useSelector(getAuth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -40,9 +36,7 @@ const App: FC = () => {
 
   return (
     <Switch>
-      <PrivateRoute path="*">
-        <MainLayout />
-      </PrivateRoute>
+      <AppRoutes path="*" />
     </Switch>
   );
 };
