@@ -6,13 +6,20 @@ import {
   TableCell,
   TableBody,
 } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import TimeAgo from 'timeago-react';
 
-import { carsSelectors } from 'store/selectors';
+import { devices as devicesSelector, selectedDevice } from 'store/selectors/devices';
+import { devicesActions } from 'store/modules';
 
 const DeviceTable: FC = () => {
-  const devices = useSelector(carsSelectors.devices);
+  const devices = useSelector(devicesSelector);
+  const dispatch = useDispatch();
+  const selected = useSelector(selectedDevice);
+
+  function handleRowSelected(id: number) {
+    dispatch(devicesActions.select(id));
+  }
 
   return (
     <Table size="small">
@@ -27,8 +34,8 @@ const DeviceTable: FC = () => {
           <TableRow
             key={row.id}
             hover
-            // selected={selected?.id === row.id}
-            // onClick={() => onRowSelected(row.id)}
+            selected={selected?.id === row.id}
+            onClick={() => handleRowSelected(row.id)}
           >
             <TableCell>{row.name}</TableCell>
             <TableCell>

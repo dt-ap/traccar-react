@@ -71,6 +71,7 @@ export interface GpsPosAtrribute {
   distance: number;
   totalDistance: number;
   motion: boolean;
+  ignition: boolean;
   hours: number;
   fuel: number;
   deviceId: number;

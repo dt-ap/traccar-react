@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { NormalizedSchema, schema } from 'normalizr';
+import { NormalizedSchema } from 'normalizr';
 
 import { Device } from 'utils/interfaces';
 import { DeviceEntities } from 'utils/types';
@@ -47,10 +47,10 @@ const { reducer, actions } = createSlice({
       state.isLoading = false;
     },
     select(state, action: PayloadAction<number>) {
-      // const dev = state.items.find(el => el.id === action.payload);
-      // if (dev) {
-      //   state.selectedId = action.payload;
-      // }
+      state.selectedId = action.payload;
+    },
+    unselect(state) {
+      state.selectedId = null;
     },
     failed(state, action: PayloadAction<string | null>) {
       state.isLoading = false;
