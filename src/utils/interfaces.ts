@@ -100,6 +100,23 @@ export interface AndPosAttribute {
   motion: number;
 }
 
+export interface ReportTrip {
+  deviceId: number;
+  deviceName: string;
+  maxSpeed: number;
+  averageSpeed: number;
+  distance: number;
+  startOdometer: number;
+  duration: number;
+  startTime: string;
+  startAddress: string;
+  endTime: string;
+  endAddress: string;
+  spentFuel: number;
+  driverUniqueId: string;
+  driverName: string;
+}
+
 export interface Server {
   id: number;
   registration: boolean;
@@ -122,4 +139,12 @@ export interface Server {
 export interface SocketData {
   positions?: Position[];
   devices?: Device[];
+}
+
+export interface TripDialogFormData {
+  deviceId: number[];
+  type: 'allEvents';
+  from: string;
+  to: string;
+  period?: string;
 }

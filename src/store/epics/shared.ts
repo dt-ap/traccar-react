@@ -3,16 +3,17 @@ import { concatMap, catchError } from 'rxjs/operators';
 import { normalize, schema } from 'normalizr';
 
 import { devicesActions } from 'store/modules';
+import { API_URL } from 'utils/constants';
 import { Device } from 'utils/interfaces';
 import { DeviceEntities } from 'utils/types';
 import { AppEpic } from './types';
 
 
-export const deviceListSchema = [new schema.Entity<Device>('devices')];
+export const deviceListSchema = [new schema.Entity<Device>('items')];
 
 export const fetchDevices$: AppEpic = (action$, state$, { ajax }) =>
   ajax({
-    url: `${process.env.REACT_APP_ROOT_URL}api/devices`,
+    url: `${API_URL}devices`,
     method: 'GET',
   }).pipe(
     concatMap(data =>

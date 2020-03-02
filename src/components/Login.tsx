@@ -12,7 +12,6 @@ import {
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { AppDispatch } from 'store';
 import { authsActions, RootState } from 'store/modules';
 import { useHistory } from 'react-router-dom';
 
@@ -23,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
-  form: {
+  formStyle: {
     width: '100%',
     marginTop: theme.spacing(1),
   },
@@ -35,12 +34,12 @@ const useStyles = makeStyles(theme => ({
 const getAuth = (state: RootState) => state.auths;
 
 const Login: FC = () => {
-  const { paper, form, submit } = useStyles();
+  const { paper, formStyle, submit } = useStyles();
   const { register, handleSubmit } = useForm<{
     email: string;
     password: string;
   }>();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   const { isAuth } = useSelector(getAuth);
   const history = useHistory();
 
@@ -61,7 +60,7 @@ const Login: FC = () => {
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <form className={form} onSubmit={onSubmit} noValidate>
+        <form className={formStyle} onSubmit={onSubmit} noValidate>
           <TextField
             variant="outlined"
             margin="normal"

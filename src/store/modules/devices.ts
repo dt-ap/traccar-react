@@ -7,7 +7,7 @@ import { DeviceEntities } from 'utils/types';
 
 type DevicesState = {
   selectedId: number | null;
-  devices: Record<number, Device>;
+  items: Record<number, Device>;
   ids: number[];
   isLoading: boolean;
   error: string | null;
@@ -17,7 +17,7 @@ const { reducer, actions } = createSlice({
   name: 'devices',
   initialState: {
     selectedId: null,
-    devices: {},
+    items: {},
     ids: [],
     isLoading: false,
     error: null,
@@ -31,7 +31,7 @@ const { reducer, actions } = createSlice({
       state,
       action: PayloadAction<NormalizedSchema<DeviceEntities, number[]>>,
     ) {
-      state.devices = action.payload.entities.devices;
+      state.items = action.payload.entities.items;
       state.ids = action.payload.result;
       state.error = null;
       state.isLoading = false;
@@ -40,8 +40,8 @@ const { reducer, actions } = createSlice({
       state,
       action: PayloadAction<NormalizedSchema<DeviceEntities, number[]>>,
     ) {
-      Object.values(action.payload.entities.devices).forEach(el => {
-        state.devices[el.id] = el;
+      Object.values(action.payload.entities.items).forEach(el => {
+        state.items[el.id] = el;
       });
       state.error = null;
       state.isLoading = false;

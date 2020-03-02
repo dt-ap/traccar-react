@@ -1,18 +1,18 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { RootState } from 'store/modules';
-import { getDevices, getSelectedId } from './shared';
+import { getDevices, getSelectedDeviceId } from './shared';
 
-const getPositions = (state: RootState) => state.positions.positions;
+const getPositions = (state: RootState) => state.positions.items;
 
-export const selectedPosition = createSelector([getPositions, getSelectedId], (poss,id) => {
+export const selSelectedPosition = createSelector([getPositions, getSelectedDeviceId], (poss,id) => {
   if (id !== null && id in poss) {
     return poss[id];
   }
   return null;
 });
 
-export const markerPositions = createSelector(
+export const selMarkerPositions = createSelector(
   [getDevices, getPositions],
   (devices, pos) =>
     Object.values(devices).map(el => ({
