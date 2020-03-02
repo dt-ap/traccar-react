@@ -30,8 +30,8 @@ const tripsReducers = {
     state: ReportState,
     action: PayloadAction<NormalizedSchema<ReportTripEntities, number[]>>,
   ) {
-    state.trips.items = action.payload.entities.items;
-    state.trips.deviceIds = action.payload.result;
+    state.trips.items = action.payload.entities.items || {};
+    state.trips.deviceIds = action.payload.result || [];
     state.isLoading = false;
     state.error = null;
   },

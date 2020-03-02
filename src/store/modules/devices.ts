@@ -31,8 +31,8 @@ const { reducer, actions } = createSlice({
       state,
       action: PayloadAction<NormalizedSchema<DeviceEntities, number[]>>,
     ) {
-      state.items = action.payload.entities.items;
-      state.ids = action.payload.result;
+      state.items = action.payload.entities.items || {};
+      state.ids = action.payload.result || [];
       state.error = null;
       state.isLoading = false;
     },
