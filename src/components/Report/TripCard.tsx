@@ -27,6 +27,8 @@ import { selDevices } from 'store/selectors/devices';
 import { TripDialogFormData } from 'utils/interfaces';
 import CardTitle from 'components/shared/CardTitle';
 import { reportActions } from 'store/modules';
+import { selReportTrips } from 'store/selectors/reports';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -54,36 +56,55 @@ const useStyles = makeStyles(theme => ({
   chip: {
     margin: 2,
   },
+  tripCard: {
+    maxHeight: '400px',
+  },
 }));
 
 const TripTable: FC = () => {
-  const trips = [] as number[];
+  const trips = useSelector(selReportTrips);
 
   return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>Device Name</TableCell>
-          <TableCell>Start Time</TableCell>
-          <TableCell>Odometer Start</TableCell>
-          <TableCell>Start Address</TableCell>
-          <TableCell>End Time</TableCell>
-          <TableCell>Odometer End</TableCell>
-          <TableCell>End Address</TableCell>
-          <TableCell>Distance</TableCell>
-          <TableCell>Average Speed</TableCell>
-          <TableCell>Maximum Speed</TableCell>
-          <TableCell>Duration</TableCell>
-          <TableCell>Spent Fuel</TableCell>
-          <TableCell>Driver</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {trips.map(t => (
-          <TableRow></TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div style={{ maxWidth: 0 }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Device Name</TableCell>
+            <TableCell>Start Time</TableCell>
+            <TableCell>Odometer Start</TableCell>
+            <TableCell>Start Address</TableCell>
+            <TableCell>End Time</TableCell>
+            <TableCell>Odometer End</TableCell>
+            <TableCell>End Address</TableCell>
+            <TableCell>Distance</TableCell>
+            <TableCell>Average Speed</TableCell>
+            <TableCell>Maximum Speed</TableCell>
+            <TableCell>Duration</TableCell>
+            <TableCell>Spent Fuel</TableCell>
+            <TableCell>Driver</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {trips.map(t => (
+            <TableRow key={`${t.deviceId}-${t.startTime}`}>
+              <TableCell>{t.deviceName}</TableCell>
+              <TableCell>{t.startTime}</TableCell>
+              <TableCell>{t.startOdometer}</TableCell>
+              <TableCell>{t.startAddress}</TableCell>
+              <TableCell>{t.endTime}</TableCell>
+              <TableCell>{t.endOdometer}</TableCell>
+              <TableCell>{t.endAddress}</TableCell>
+              <TableCell>{t.distance}</TableCell>
+              <TableCell>{t.averageSpeed}</TableCell>
+              <TableCell>{t.maxSpeed}</TableCell>
+              <TableCell>{t.duration}</TableCell>
+              <TableCell>{t.spentFuel}</TableCell>
+              <TableCell>{t.driverName}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 
@@ -193,7 +214,7 @@ const ConfigureDialog: FC<{
 };
 
 const TripCard: FC = () => {
-  const { paper, header, title } = useStyles();
+  const { paper, header, title, tripCard } = useStyles();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formData, setFormData] = useState<TripDialogFormData>();
   const dispatch = useDispatch();
@@ -268,7 +289,7 @@ const TripCard: FC = () => {
   };
 
   return (
-    <Paper className={paper}>
+    <Paper className={clsx(paper, tripCard)}>
       <div className={header}>
         <span className={title}>
           <CardTitle>Trips</CardTitle>

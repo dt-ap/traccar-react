@@ -1,7 +1,14 @@
 import { of } from 'rxjs';
 import { AjaxError } from 'rxjs/ajax';
-import { filter, switchMapTo, concatMap, catchError } from 'rxjs/operators';
+import {
+  filter,
+  switchMapTo,
+  concatMap,
+  catchError,
+  switchMap,
+} from 'rxjs/operators';
 import { schema, normalize } from 'normalizr';
+import { stringify } from 'query-string';
 
 import { API_URL } from 'utils/constants';
 import { ReportTrip } from 'utils/interfaces';
@@ -16,14 +23,16 @@ export const devicesEpic: AppEpic = (action$, state$, dep) =>
     switchMapTo(fetchDevices$(action$, state$, dep)),
   );
 
-const reportTripListSchema = [new schema.Entity<ReportTrip>('items')];
+const reportTripListSchema = [
+  new schema.Entity<ReportTrip>('items', {}, { idAttribute: (value: ReportTrip, parent, key) => `${value.deviceId}-${value.startTime}` }),
+];
 
 export const reportTripsEpic: AppEpic = (action$, _, { ajax }) =>
   action$.pipe(
     filter(reportActions.tripsFetching.match),
-    switchMapTo(
+    switchMap(action =>
       ajax({
-        url: `${API_URL}reports/trips`,
+        url: `${API_URL}reports/trips?${stringify(action.payload)}`,
         method: 'GET',
       }).pipe(
         concatMap(data =>
@@ -36,7 +45,7 @@ export const reportTripsEpic: AppEpic = (action$, _, { ajax }) =>
             ),
           ),
         ),
-        catchError((err: AjaxError) => of(reportActions.failed(err.response)))
+        catchError((err: AjaxError) => of(reportActions.failed(err.response))),
       ),
     ),
   );

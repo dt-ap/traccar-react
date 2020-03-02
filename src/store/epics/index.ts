@@ -4,7 +4,7 @@ import { RootState } from 'store/modules';
 import { Depedencies, depedencies } from './depedencies';
 import { loginEpic, checkAuthEpic, logoutEpic } from './auths';
 import { appInitEpic } from './sockets';
-import { devicesEpic } from './fetches';
+import { devicesEpic, reportTripsEpic } from './fetches';
 
 const rootEpic = combineEpics(
   loginEpic,
@@ -12,7 +12,9 @@ const rootEpic = combineEpics(
   checkAuthEpic,
   appInitEpic,
   devicesEpic,
+  reportTripsEpic,
 );
+
 const epicMiddleware = createEpicMiddleware<any, any, RootState, Depedencies>({
   dependencies: depedencies,
 });

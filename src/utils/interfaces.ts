@@ -106,11 +106,12 @@ export interface ReportTrip {
   maxSpeed: number;
   averageSpeed: number;
   distance: number;
-  startOdometer: number;
   duration: number;
+  startOdometer: number;
+  endOdometer: number;
   startTime: string;
-  startAddress: string;
   endTime: string;
+  startAddress: string;
   endAddress: string;
   spentFuel: number;
   driverUniqueId: string;
