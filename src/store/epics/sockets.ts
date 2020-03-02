@@ -13,7 +13,7 @@ import { AppEpic } from './types';
 import { fetchDevices$, deviceListSchema } from './shared';
 
 const positionListSchema = [
-  new schema.Entity<Position>('positions', {}, { idAttribute: 'deviceId' }),
+  new schema.Entity<Position>('items', {}, { idAttribute: 'deviceId' }),
 ];
 
 const normDevice = (devices: Device[]) =>

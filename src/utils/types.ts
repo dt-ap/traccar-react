@@ -1,4 +1,4 @@
-import { Device, Position } from './interfaces';
+import { Device, Position, ReportTrip } from './interfaces';
 
 export type SidebarItem = {
   key: string;
@@ -7,10 +7,12 @@ export type SidebarItem = {
   icon: JSX.Element;
 };
 
-export type DeviceEntities = {
-  devices: Record<number, Device>;
-};
-
-export type PositionEntities = {
-  positions: Record<number, Position>;
+type ListEntities<K extends string | number | symbol, T> = {
+  items: Record<K, T>;
 }
+
+export type DeviceEntities = ListEntities<number, Device>;
+
+export type PositionEntities = ListEntities<number, Position>;
+
+export type ReportTripEntities = ListEntities<number, ReportTrip>;

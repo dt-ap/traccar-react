@@ -9,13 +9,13 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import TimeAgo from 'timeago-react';
 
-import { devices as devicesSelector, selectedDevice } from 'store/selectors/devices';
+import { selDevices, selSelectedDevice } from 'store/selectors/devices';
 import { devicesActions } from 'store/modules';
 
 const DeviceTable: FC = () => {
-  const devices = useSelector(devicesSelector);
   const dispatch = useDispatch();
-  const selected = useSelector(selectedDevice);
+  const devices = useSelector(selDevices);
+  const selected = useSelector(selSelectedDevice);
 
   function handleRowSelected(id: number) {
     dispatch(devicesActions.select(id));

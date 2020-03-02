@@ -19,12 +19,12 @@ const { reducer, actions } = createSlice({
       state.isLoading = true;
       state.error = null;
     },
-    loginSuccess(state) {
+    loginSucceeded(state) {
       state.isLoading = false;
       state.error = null;
       state.isAuth = true;
     },
-    loginFail(state, action: PayloadAction<string | null>) {
+    loginFailed(state, action: PayloadAction<string | null>) {
       state.isLoading = false;
       state.isAuth = false;
       state.error = action.payload || 'Login Error';

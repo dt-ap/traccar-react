@@ -106,7 +106,7 @@ const useFetchData = (dispatch: Dispatch<AnyAction>) => {
 const MainLayout: FC = () => {
   const { main, roots, footer } = useStyles();
   const [open, setOpen] = useState(true);
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
 
   useFetchData(dispatch);
   const barTitle = useBarTitle(dispatch);

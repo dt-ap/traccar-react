@@ -5,11 +5,10 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  makeStyles,
 } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 
-import { selectedPosition } from 'store/selectors/positions';
+import { selSelectedPosition } from 'store/selectors/positions';
 import { GpsPosAtrribute, AndPosAttribute } from 'utils/interfaces';
 
 const tableHeader: Record<string, string> = {
@@ -53,7 +52,7 @@ function isGpsAttr(
 }
 
 const useStateTable = () => {
-  const pos = useSelector(selectedPosition);
+  const pos = useSelector(selSelectedPosition);
 
   if (pos !== null) {
     let attrTables: [string, string][];
@@ -86,7 +85,7 @@ const StateTable: FC = () => {
     <div style={{ maxWidth: 0 }}>
       <Table>
         <TableHead>
-          <TableRow style={{ maxWidth: '100%', overflowX: 'scroll' }}>
+          <TableRow>
             {states.map(s => (
               <TableCell key={s[0]}>{s[0]}</TableCell>
             ))}

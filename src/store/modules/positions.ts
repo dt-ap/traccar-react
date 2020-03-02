@@ -5,7 +5,7 @@ import { NormalizedSchema } from 'normalizr';
 import { PositionEntities } from 'utils/types';
 
 type PositionsState = {
-  positions: Record<number, Position>;
+  items: Record<number, Position>;
   deviceIds: number[];
   isLoading: boolean;
   error: string | null;
@@ -14,7 +14,7 @@ type PositionsState = {
 const { reducer, actions } = createSlice({
   name: 'positions',
   initialState: {
-    positions: {},
+    items: {},
     deviceIds: [],
     isLoading: false,
     error: null,
@@ -24,8 +24,8 @@ const { reducer, actions } = createSlice({
       state,
       action: PayloadAction<NormalizedSchema<PositionEntities, number[]>>,
     ) {
-      Object.values(action.payload.entities.positions).forEach(el => {
-        state.positions[el.deviceId] = el;
+      Object.values(action.payload.entities.items).forEach(el => {
+        state.items[el.deviceId] = el;
       });
       state.error = null;
       state.isLoading = false;

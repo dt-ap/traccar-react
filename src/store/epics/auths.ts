@@ -6,10 +6,10 @@ import {
   catchError,
   switchMapTo,
   concatMap,
-  delay,
 } from 'rxjs/operators';
 
 import { authsActions, usersActions, serversActions } from 'store/modules';
+import { API_URL } from 'utils/constants';
 import { User, Server } from 'utils/interfaces';
 import { AppEpic } from './types';
 
@@ -18,20 +18,20 @@ export const loginEpic: AppEpic = (action$, _, { ajax }) =>
     filter(authsActions.login.match),
     switchMap(action =>
       ajax({
-        url: `${process.env.REACT_APP_ROOT_URL}api/session`,
+        url: `${API_URL}session`,
         method: 'POST',
         body: action.payload,
       }).pipe(
         concatMap(data =>
           of(
-            authsActions.loginSuccess(),
+            authsActions.loginSucceeded(),
             usersActions.setUser(data.response as User),
           ),
         ),
         catchError((err: AjaxError) =>
           err.status === 401
-            ? of(authsActions.loginFail('Invalid email or password'))
-            : of(authsActions.loginFail(err.response)),
+            ? of(authsActions.loginFailed('Invalid email or password'))
+            : of(authsActions.loginFailed(err.response)),
         ),
       ),
     ),
@@ -42,24 +42,24 @@ export const checkAuthEpic: AppEpic = (action$, state$, { ajax }) =>
     filter(authsActions.checkAuth.match),
     switchMapTo(
       ajax({
-        url: `${process.env.REACT_APP_ROOT_URL}api/server`,
+        url: `${API_URL}server`,
         method: 'GET',
       }).pipe(
         concatMap(data =>
           zip(
             of(true),
             of(
-              authsActions.loginSuccess(),
+              authsActions.loginSucceeded(),
               serversActions.set(data.response as Server),
             ),
           ),
         ),
-        catchError(_ => zip(of(false), of(authsActions.loginFail(null)))),
+        catchError(_ => zip(of(false), of(authsActions.loginFailed(null)))),
         concatMap(([success, serverData]) =>
           iif(
             () => success,
             ajax({
-              url: `${process.env.REACT_APP_ROOT_URL}api/session`,
+              url: `${API_URL}session`,
               method: 'GET',
             }).pipe(
               concatMap(sessData =>
@@ -67,8 +67,8 @@ export const checkAuthEpic: AppEpic = (action$, state$, { ajax }) =>
               ),
               catchError((err: AjaxError) =>
                 err.status === 401
-                  ? of(authsActions.loginFail('Invalid email or password'))
-                  : of(authsActions.loginFail(err.response)),
+                  ? of(authsActions.loginFailed('Invalid email or password'))
+                  : of(authsActions.loginFailed(err.response)),
               ),
             ),
             of(serverData),
@@ -83,10 +83,8 @@ export const logoutEpic: AppEpic = (action$, _, { ajax }) =>
     filter(authsActions.logout.match),
     switchMapTo(
       ajax({
-        url: `${process.env.REACT_APP_ROOT_URL}api/session`,
+        url: `${API_URL}session`,
         method: 'DELETE',
-      }).pipe(
-        concatMap(data => of(authsActions.logoutSuccess()))
-      ),
+      }).pipe(concatMap(data => of(authsActions.logoutSuccess()))),
     ),
   );

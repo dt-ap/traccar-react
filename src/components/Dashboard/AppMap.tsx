@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux';
 import { Map, Marker, TileLayer, ZoomControl } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
 
-import { markerPositions } from 'store/selectors/positions';
+import { selMarkerPositions } from 'store/selectors/positions';
 
 const position: LatLngTuple = [-6.2897, 106.79604];
 
 const AppMap: FC = () => {
   const [zoom, setZoom] = useState(12);
   const mapRef = useRef<Map>(null);
-  const markerPos = useSelector(markerPositions);
+  const markerPos = useSelector(selMarkerPositions);
 
   useEffect(() => {
     if (mapRef.current) {
