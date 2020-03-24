@@ -1,3 +1,9 @@
+## This Repository is archived!
+
+**The link to the current [Traccar Modern](https://github.com/traccar/traccar-web/tree/master/modern).**
+
+\
+\
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Prerequisite
